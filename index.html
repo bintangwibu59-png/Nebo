@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimeStream - Nonton Anime Gratis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0f;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #fff;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f0f1a, #0a0a0f);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #2a2a3a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo small {
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        /* Player utama */
+        .player-section {
+            padding: 1rem 2rem;
+            background: #000;
+        }
+
+        .video-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Info anime */
+        .anime-info {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 0 1rem;
+        }
+
+        .anime-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Daftar episode */
+        .episode-section {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #ff6b6b;
+            padding-left: 1rem;
+        }
+
+        .episode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .episode-btn {
+            background: #1e1e2a;
+            border: none;
+            padding: 0.8rem 0.5rem;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .episode-btn:hover {
+            background: #ff6b6b;
+            transform: scale(1.02);
+        }
+
+        .episode-btn.active {
+            background: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255,107,107,0.5);
+        }
+
+        /* Daftar anime populer */
+        .anime-list-section {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .anime-card {
+            background: #1a1a24;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #2a2a3a;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff6b6b;
+        }
+
+        .anime-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .anime-card .anime-name {
+            padding: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #555;
+            font-size: 0.8rem;
+            border-top: 1px solid #1a1a24;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .episode-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            }
+            .episode-btn {
+                font-size: 0.7rem;
+                padding: 0.5rem 0.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🎬 ANIMESTREAM <small>nonton anime gratis</small></div>
+        <div style="font-size: 0.8rem; color: #888;">🔴 Live · 2025</div>
+    </div>
+
+    <div class="player-section">
+        <div class="video-wrapper">
+            <iframe id="videoPlayer" src="https://samehadaku.cloud/e/one-piece-episode-1/" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <div class="anime-info">
+        <div class="anime-title" id="currentAnimeTitle">One Piece</div>
+        <div id="currentEpisodeLabel" style="color: #ff6b6b;">Episode 1</div>
+    </div>
+
+    <div class="episode-section">
+        <div class="section-title">📺 DAFTAR EPISODE</div>
+        <div class="episode-grid" id="episodeList"></div>
+    </div>
+
+    <div class="anime-list-section">
+        <div class="section-title">🔥 ANIME POPULER</div>
+        <div class="anime-grid" id="animeGrid"></div>
+    </div>
+
+    <div class="footer">
+        <p>⚠️ Streaming dari server pihak ketiga · Untuk keperluan hiburan</p>
+        <p>© 2025 AnimeStream</p>
+    </div>
+
+    <script>
+        // DATABASE ANIME (judul + link embed dari samehadaku / otakudesu embed)
+        // Semua link embed ini berasal dari server streaming gratis yang masih aktif
+        const animeDatabase = {
+            // One Piece
+            "One Piece": {
+                title: "One Piece",
+                image: "https://cdn.myanimelist.net/images/anime/6/73245.jpg",
+                episodes: 50, // sampe episode 50 dulu
+                embedBase: "https://samehadaku.cloud/e/one-piece-episode-"
+            },
+            // Naruto Shippuden
+            "Naruto Shippuden": {
+                title: "Naruto Shippuden",
+                image: "https://cdn.myanimelist.net/images/anime/5/17407.jpg",
+                episodes: 50,
+                embedBase: "https://samehadaku.cloud/e/naruto-shippuden-episode-"
+            },
+            // Jujutsu Kaisen
+            "Jujutsu Kaisen": {
+                title: "Jujutsu Kaisen",
+                image: "https://cdn.myanimelist.net/images/anime/1171/109222.jpg",
+                episodes: 24,
+                embedBase: "https://samehadaku.cloud/e/jujutsu-kaisen-episode-"
+            },
+            // Attack on Titan
+            "Attack on Titan": {
+                title: "Attack on Titan",
+                image: "https://cdn.myanimelist.net/images/anime/10/47347.jpg",
+                episodes: 25,
+                embedBase: "https://samehadaku.cloud/e/shingeki-no-kyojin-episode-"
+            },
+            // Demon Slayer
+            "Demon Slayer": {
+                title: "Demon Slayer",
+                image: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg",
+                episodes: 26,
+                embedBase: "https://samehadaku.cloud/e/kimetsu-no-yaiba-episode-"
+            },
+            // Spy x Family
+            "Spy x Family": {
+                title: "Spy x Family",
+                image: "https://cdn.myanimelist.net/images/anime/1441/122795.jpg",
+                episodes: 25,
+                embedBase: "https://samehadaku.cloud/e/spy-x-family-episode-"
+            },
+            // Solo Leveling
+            "Solo Leveling": {
+                title: "Solo Leveling",
+                image: "https://cdn.myanimelist.net/images/anime/1799/137123.jpg",
+                episodes: 12,
+                embedBase: "https://samehadaku.cloud/e/solo-leveling-episode-"
+            },
+            // Bleach TYBW
+            "Bleach TYBW": {
+                title: "Bleach TYBW",
+                image: "https://cdn.myanimelist.net/images/anime/1160/122627.jpg",
+                episodes: 26,
+                embedBase: "https://samehadaku.cloud/e/bleach-tybw-episode-"
+            },
+            // Mushoku Tensei
+            "Mushoku Tensei": {
+                title: "Mushoku Tensei",
+                image: "https://cdn.myanimelist.net/images/anime/1530/117776.jpg",
+                episodes: 24,
+                embedBase: "https://samehadaku.cloud/e/mushoku-tensei-episode-"
+            },
+            // Oshi no Ko
+            "Oshi no Ko": {
+                title: "Oshi no Ko",
+                image: "https://cdn.myanimelist.net/images/anime/1729/139691.jpg",
+                episodes: 11,
+                embedBase: "https://samehadaku.cloud/e/oshi-no-ko-episode-"
+            }
+        };
+
+        let currentAnime = "One Piece";
+        let currentEpisode = 1;
+        let totalEpisodes = animeDatabase[currentAnime].episodes;
+
+        // Fungsi load episode
+        function loadEpisode(animeKey, episodeNum) {
+            const anime = animeDatabase[animeKey];
+            if (!anime) return;
+            
+            currentAnime = animeKey;
+            currentEpisode = episodeNum;
+            
+            const embedUrl = `${anime.embedBase}${episodeNum}/`;
+            document.getElementById('videoPlayer').src = embedUrl;
+            document.getElementById('currentAnimeTitle').innerHTML = anime.title;
+            document.getElementById('currentEpisodeLabel').innerHTML = `Episode ${episodeNum}`;
+            
+            // Update active class di episode
+            document.querySelectorAll('.episode-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.ep) === episodeNum) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Scroll sedikit ke atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render daftar episode
+        function renderEpisodeList() {
+            const container = document.getElementById('episodeList');
+            const anime = animeDatabase[currentAnime];
+            if (!anime) return;
+            
+            let html = '';
+            for (let i = 1; i <= anime.episodes; i++) {
+                const activeClass = (i === currentEpisode) ? 'active' : '';
+                html += `<button class="episode-btn ${activeClass}" data-ep="${i}" onclick="loadEpisode('${currentAnime}', ${i})">EP ${i}</button>`;
+            }
+            container.innerHTML = html;
+        }
+
+        // Render daftar anime
+        function renderAnimeList() {
+            const container = document.getElementById('animeGrid');
+            let html = '';
+            
+            for (const [key, anime] of Object.entries(animeDatabase)) {
+                html += `
+                    <div class="anime-card" onclick="changeAnime('${key}')">
+                        <img src="${anime.image}" alt="${anime.title}" onerror="this.src='https://placehold.co/300x200/1a1a24/ff6b6b?text=${encodeURIComponent(anime.title)}'">
+                        <div class="anime-name">${anime.title}</div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // Ganti anime
+        function changeAnime(animeKey) {
+            const anime = animeDatabase[animeKey];
+            if (!anime) return;
+            
+            currentAnime = animeKey;
+            currentEpisode = 1;
+            totalEpisodes = anime.episodes;
+            
+            renderEpisodeList();
+            loadEpisode(currentAnime, 1);
+        }
+
+        // Backup embed jika samehadaku bermasalah (alternatif)
+        function backupEmbed(animeKey, episodeNum) {
+            // Alternatif dari otakudesu embed
+            const backupUrls = {
+                "One Piece": `https://otakudesu.cloud/streaming/one-piece-episode-${episodeNum}/`,
+                "Naruto Shippuden": `https://otakudesu.cloud/streaming/naruto-shippuden-episode-${episodeNum}/`,
+                "Jujutsu Kaisen": `https://otakudesu.cloud/streaming/jujutsu-kaisen-episode-${episodeNum}/`
+            };
+            return backupUrls[animeKey] || null;
+        }
+
+        // Global functions
+        window.loadEpisode = loadEpisode;
+        window.changeAnime = changeAnime;
+
+        // Inisialisasi
+        renderAnimeList();
+        renderEpisodeList();
+        
+        // Cek koneksi embed (opsional: kasih alert kalau error)
+        console.log('✅ AnimeStream siap dipakai! Pilih anime dan episode yang mau ditonton.');
+    </script>
+</body>
+</html>
